@@ -10,7 +10,7 @@ const stores = [
     slug: "c-orrico",
     description: "Timeless elegance and sophisticated fashion for the modern woman",
     area: "Worth Avenue",
-    category: "Women's Fashion",
+    category: "Women&apos;s Fashion",
     isPremium: true,
     hasOffer: true,
     image: "/api/placeholder/300/200",
@@ -66,11 +66,11 @@ const stores = [
   },
   {
     id: 6,
-    name: "Rapunzel's Closet",
+    name: "Rapunzel&apos;s Closet",
     slug: "rapunzels-closet",
     description: "Contemporary fashion and unique designer pieces",
     area: "CityPlace",
-    category: "Women's Fashion",
+    category: "Women&apos;s Fashion",
     isPremium: false,
     hasOffer: false,
     image: "/api/placeholder/300/200",
@@ -88,7 +88,7 @@ export default function StoresPage() {
             Store Directory
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Discover Palm Beach's finest boutiques, from Worth Avenue's luxury retailers to hidden gems throughout the area
+            Discover Palm Beach&apos;s finest boutiques, from Worth Avenue&apos;s luxury retailers to hidden gems throughout the area
           </p>
           
           {/* Quick filters */}

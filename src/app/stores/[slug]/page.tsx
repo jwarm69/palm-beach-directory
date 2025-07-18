@@ -4,7 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, Phone, Globe, Star } from "lucide-react";
 
 // Mock store data
-const storeData: { [key: string]: any } = {
+interface Store {
+  name: string;
+  description: string;
+  area: string;
+  address: string;
+  phone: string;
+  website: string;
+  hours: { day: string; time: string }[];
+  categories: string[];
+  priceRange: string;
+  isPremium: boolean;
+  rating: number;
+  reviewCount: number;
+  features: string[];
+  welcomeOffer: {
+    title: string;
+    description: string;
+    terms: string;
+    validUntil: string;
+  };
+}
+
+const storeData: { [key: string]: Store } = {
   "c-orrico": {
     name: "C. Orrico",
     description: "C. Orrico has been Palm Beach's destination for timeless elegance and sophisticated fashion for over three decades. Our carefully curated collection features contemporary and classic pieces for the modern woman who values quality and style.",
@@ -66,20 +88,21 @@ const storeData: { [key: string]: any } = {
 };
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function StorePage({ params }: Props) {
-  const store = storeData[params.slug];
+export default async function StorePage({ params }: Props) {
+  const { slug } = await params;
+  const store = storeData[slug];
 
   if (!store) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-display font-bold text-navy mb-4">Store Not Found</h1>
-          <p className="text-gray-600 mb-8">The store you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-8">The store you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/stores">
             <Button className="btn-luxury">View All Stores</Button>
           </Link>
@@ -89,8 +112,8 @@ export default function StorePage({ params }: Props) {
   }
 
   const currentTime = new Date();
-  const currentDay = currentTime.toLocaleLowerCase().slice(0, 3);
-  const todayHours = store.hours.find((h: any) => h.day.toLowerCase().includes(currentDay));
+  const currentDay = currentTime.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase().slice(0, 3);
+  const todayHours = store.hours.find((h) => h.day.toLowerCase().includes(currentDay));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sand/10 to-white">
@@ -232,7 +255,7 @@ export default function StorePage({ params }: Props) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {store.hours.map((hour: any) => (
+                  {store.hours.map((hour) => (
                     <div key={hour.day} className="flex justify-between">
                       <span className="font-medium">{hour.day}</span>
                       <span className="text-gray-600">{hour.time}</span>

@@ -72,7 +72,7 @@ const offers = [
     type: "percent",
     value: "10%",
     store: {
-      name: "Rapunzel's Closet",
+      name: "Rapunzel&apos;s Closet",
       slug: "rapunzels-closet",
       area: "CityPlace"
     },
@@ -118,7 +118,7 @@ export default function OffersPage() {
             Welcome Offers
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Exclusive privileges for first-time visitors to Palm Beach's finest retailers. 
+            Exclusive privileges for first-time visitors to Palm Beach&apos;s finest retailers. 
             Discover complimentary services, special discounts, and unique experiences.
           </p>
           
@@ -226,7 +226,7 @@ export default function OffersPage() {
                   Browse Offers
                 </h3>
                 <p className="text-gray-600">
-                  Explore exclusive welcome offers from Palm Beach's finest retailers
+                  Explore exclusive welcome offers from Palm Beach&apos;s finest retailers
                 </p>
               </CardContent>
             </Card>
@@ -269,7 +269,7 @@ export default function OffersPage() {
             Ready to Start Shopping?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Explore Palm Beach's shopping districts and discover your new favorites
+            Explore Palm Beach&apos;s shopping districts and discover your new favorites
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/stores">

@@ -39,7 +39,7 @@ export default function AreasPage() {
             Shopping Areas
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Explore Palm Beach's distinct shopping districts, each offering its own unique character, 
+            Explore Palm Beach&apos;s distinct shopping districts, each offering its own unique character, 
             atmosphere, and collection of retailers.
           </p>
         </div>

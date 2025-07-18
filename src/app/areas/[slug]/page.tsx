@@ -1,10 +1,31 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Car, Clock, Star } from "lucide-react";
+import { MapPin, Car, Star } from "lucide-react";
 
 // Mock area data
-const areaData: { [key: string]: any } = {
+interface Area {
+  name: string;
+  description: string;
+  heroImage: string;
+  highlights: string[];
+  parkingInfo: {
+    description: string;
+    options: string[];
+  };
+  stores: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    category: string;
+    isPremium: boolean;
+    hasOffer: boolean;
+    rating: number;
+  }[];
+}
+
+const areaData: { [key: string]: Area } = {
   "worth-avenue": {
     name: "Worth Avenue",
     description: "Worth Avenue is internationally renowned as one of the world's premier luxury shopping destinations. This iconic street stretches for four blocks and features over 250 shops, boutiques, art galleries, and restaurants in a Mediterranean-style setting.",
@@ -137,20 +158,21 @@ const areaData: { [key: string]: any } = {
 };
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function AreaPage({ params }: Props) {
-  const area = areaData[params.slug];
+export default async function AreaPage({ params }: Props) {
+  const { slug } = await params;
+  const area = areaData[slug];
 
   if (!area) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-display font-bold text-navy mb-4">Area Not Found</h1>
-          <p className="text-gray-600 mb-8">The area you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-8">The area you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/areas">
             <Button className="btn-luxury">View All Areas</Button>
           </Link>
@@ -201,7 +223,7 @@ export default function AreaPage({ params }: Props) {
             Featured Stores
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {area.stores.map((store: any) => (
+            {area.stores.map((store) => (
               <Link key={store.id} href={`/stores/${store.slug}`}>
                 <Card className={`card-luxury group cursor-pointer h-full ${store.isPremium ? 'ring-2 ring-gold/20' : ''}`}>
                   <CardHeader className="pb-4">
