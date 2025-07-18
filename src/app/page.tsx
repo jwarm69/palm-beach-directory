@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -15,12 +16,16 @@ export default function Home() {
             Discover Worth Avenue&apos;s finest boutiques and hidden gems with exclusive welcome offers
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="btn-luxury text-lg px-8 py-6">
-              Explore Stores
-            </Button>
-            <Button variant="outline" className="btn-gold text-lg px-8 py-6">
-              View Offers
-            </Button>
+            <Link href="/stores">
+              <Button className="btn-luxury text-lg px-8 py-6">
+                Explore Stores
+              </Button>
+            </Link>
+            <Link href="/offers">
+              <Button variant="outline" className="btn-gold text-lg px-8 py-6">
+                View Offers
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -32,56 +37,62 @@ export default function Home() {
             Shopping Districts
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="card-luxury group cursor-pointer">
-              <CardHeader>
-                <CardTitle className="text-luxury">Worth Avenue</CardTitle>
-                <CardDescription>
-                  The crown jewel of luxury shopping with world-renowned boutiques
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 bg-gradient-luxury rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-display">Worth Ave</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Explore high-end fashion, jewelry, and art galleries
-                </p>
-              </CardContent>
-            </Card>
+            <Link href="/areas/worth-avenue">
+              <Card className="card-luxury group cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-luxury">Worth Avenue</CardTitle>
+                  <CardDescription>
+                    The crown jewel of luxury shopping with world-renowned boutiques
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 bg-gradient-luxury rounded-lg mb-4 flex items-center justify-center">
+                    <span className="text-white text-2xl font-display">Worth Ave</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Explore high-end fashion, jewelry, and art galleries
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="card-luxury group cursor-pointer">
-              <CardHeader>
-                <CardTitle className="text-luxury">Royal Poinciana</CardTitle>
-                <CardDescription>
-                  Modern luxury shopping with contemporary brands
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 bg-gradient-gold rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-navy text-2xl font-display">Royal P</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Discover modern luxury and lifestyle brands
-                </p>
-              </CardContent>
-            </Card>
+            <Link href="/areas/royal-poinciana">
+              <Card className="card-luxury group cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-luxury">Royal Poinciana</CardTitle>
+                  <CardDescription>
+                    Modern luxury shopping with contemporary brands
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 bg-gradient-gold rounded-lg mb-4 flex items-center justify-center">
+                    <span className="text-navy text-2xl font-display">Royal P</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Discover modern luxury and lifestyle brands
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="card-luxury group cursor-pointer">
-              <CardHeader>
-                <CardTitle className="text-luxury">CityPlace</CardTitle>
-                <CardDescription>
-                  Vibrant shopping and dining destination
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 bg-sage rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-display">CityPlace</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Mix of premium retailers and local favorites
-                </p>
-              </CardContent>
-            </Card>
+            <Link href="/areas/cityplace">
+              <Card className="card-luxury group cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-luxury">CityPlace</CardTitle>
+                  <CardDescription>
+                    Vibrant shopping and dining destination
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 bg-sage rounded-lg mb-4 flex items-center justify-center">
+                    <span className="text-white text-2xl font-display">CityPlace</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Mix of premium retailers and local favorites
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
@@ -96,20 +107,24 @@ export default function Home() {
             First-time visitors enjoy special privileges at participating stores
           </p>
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="card-luxury">
-              <CardContent className="p-6">
-                <div className="text-gold text-3xl mb-3">15%</div>
-                <h3 className="font-display font-semibold text-navy mb-2">First Visit Discount</h3>
-                <p className="text-gray-600">Available at premium boutiques</p>
-              </CardContent>
-            </Card>
-            <Card className="card-luxury">
-              <CardContent className="p-6">
-                <div className="text-coral text-3xl mb-3">🎁</div>
-                <h3 className="font-display font-semibold text-navy mb-2">Complimentary Services</h3>
-                <p className="text-gray-600">Personal styling and consultations</p>
-              </CardContent>
-            </Card>
+            <Link href="/offers?type=discount">
+              <Card className="card-luxury cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="text-gold text-3xl mb-3">15%</div>
+                  <h3 className="font-display font-semibold text-navy mb-2">First Visit Discount</h3>
+                  <p className="text-gray-600">Available at premium boutiques</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/offers?type=experience">
+              <Card className="card-luxury cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="text-coral text-3xl mb-3">🎁</div>
+                  <h3 className="font-display font-semibold text-navy mb-2">Complimentary Services</h3>
+                  <p className="text-gray-600">Personal styling and consultations</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
