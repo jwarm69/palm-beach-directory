@@ -2,6 +2,21 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Gift, Percent, Star, Calendar } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Exclusive Welcome Offers | Palm Beach Shopping Discounts & Deals",
+  description: "First-time visitor exclusive offers from Palm Beach's finest boutiques. 15% discounts, complimentary services, and special perks at Worth Avenue stores.",
+  keywords: "Palm Beach offers, Worth Avenue discounts, first time visitor deals, exclusive shopping offers, luxury boutique discounts",
+  openGraph: {
+    title: "Exclusive Palm Beach Shopping Offers | First-Time Visitor Deals",
+    description: "Special offers and discounts for first-time visitors to Palm Beach's luxury boutiques",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://palm-beach-directory.vercel.app/offers",
+  },
+};
 
 // Mock offers data
 const offers = [

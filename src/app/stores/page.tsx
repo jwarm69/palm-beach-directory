@@ -1,6 +1,21 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Store Directory | 50+ Palm Beach Luxury Boutiques & Shops",
+  description: "Complete directory of Palm Beach's finest boutiques, from Worth Avenue's luxury retailers to hidden gems. Browse by area, category, and exclusive offers.",
+  keywords: "Palm Beach stores, Worth Avenue boutiques, luxury shopping directory, Palm Beach fashion, designer stores",
+  openGraph: {
+    title: "Palm Beach Store Directory | Luxury Shopping Guide",
+    description: "Discover 50+ luxury boutiques and shops in Palm Beach, Florida",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://palm-beach-directory.vercel.app/stores",
+  },
+};
 
 // Mock data for stores
 const stores = [

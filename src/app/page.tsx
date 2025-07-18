@@ -46,7 +46,7 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-48 bg-gradient-luxury rounded-lg mb-4 flex items-center justify-center">
+                  <div className="h-48 bg-gradient-luxury rounded-lg mb-4 flex items-center justify-center" role="img" aria-label="Worth Avenue luxury shopping district">
                     <span className="text-white text-2xl font-display">Worth Ave</span>
                   </div>
                   <p className="text-sm text-gray-600">
@@ -65,7 +65,7 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-48 bg-gradient-gold rounded-lg mb-4 flex items-center justify-center">
+                  <div className="h-48 bg-gradient-gold rounded-lg mb-4 flex items-center justify-center" role="img" aria-label="Royal Poinciana Plaza shopping center">
                     <span className="text-navy text-2xl font-display">Royal P</span>
                   </div>
                   <p className="text-sm text-gray-600">
@@ -84,7 +84,7 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-48 bg-sage rounded-lg mb-4 flex items-center justify-center">
+                  <div className="h-48 bg-sage rounded-lg mb-4 flex items-center justify-center" role="img" aria-label="CityPlace shopping and entertainment district">
                     <span className="text-white text-2xl font-display">CityPlace</span>
                   </div>
                   <p className="text-sm text-gray-600">

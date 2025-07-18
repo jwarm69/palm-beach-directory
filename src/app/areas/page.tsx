@@ -1,6 +1,21 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Store, Star } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Shopping Areas | Worth Avenue, Royal Poinciana & CityPlace Guide",
+  description: "Explore Palm Beach's premier shopping districts. Worth Avenue luxury boutiques, Royal Poinciana contemporary brands, and CityPlace diverse retailers.",
+  keywords: "Worth Avenue, Royal Poinciana, CityPlace, Palm Beach shopping areas, luxury districts, shopping guide",
+  openGraph: {
+    title: "Palm Beach Shopping Areas | Luxury District Guide",
+    description: "Your guide to Palm Beach's distinct shopping districts and their unique character",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://palm-beach-directory.vercel.app/areas",
+  },
+};
 
 const areas = [
   {

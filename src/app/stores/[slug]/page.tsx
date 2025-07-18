@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, Phone, Globe, Star } from "lucide-react";
+import { Metadata } from "next";
+import { LocalBusinessSchema, OfferSchema, BreadcrumbSchema } from "@/components/StructuredData";
 
 // Mock store data
 interface Store {
@@ -93,6 +95,39 @@ interface Props {
   }>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const store = storeData[slug];
+
+  if (!store) {
+    return {
+      title: "Store Not Found | Palm Beach Luxury Guide",
+      description: "The store you're looking for doesn't exist in our Palm Beach shopping directory."
+    };
+  }
+
+  return {
+    title: `${store.name} Palm Beach | ${store.area} ${store.categories[0]} Store`,
+    description: `${store.description} Located on ${store.area}. ${store.features.slice(0, 3).join(', ')}. Rating: ${store.rating}/5 stars.`,
+    keywords: `${store.name}, ${store.area}, Palm Beach shopping, ${store.categories.join(', ')}, luxury boutique`,
+    openGraph: {
+      title: `${store.name} | Palm Beach Luxury Shopping`,
+      description: store.description,
+      type: "website",
+      locale: "en_US",
+      siteName: "Palm Beach Luxury Guide",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${store.name} | Palm Beach Shopping`,
+      description: store.description,
+    },
+    alternates: {
+      canonical: `https://palm-beach-directory.vercel.app/stores/${slug}`,
+    },
+  };
+}
+
 export default async function StorePage({ params }: Props) {
   const { slug } = await params;
   const store = storeData[slug];
@@ -115,8 +150,37 @@ export default async function StorePage({ params }: Props) {
   const currentDay = currentTime.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase().slice(0, 3);
   const todayHours = store.hours.find((h) => h.day.toLowerCase().includes(currentDay));
 
+  const breadcrumbItems = [
+    { name: "Home", url: "https://palm-beach-directory.vercel.app" },
+    { name: "Stores", url: "https://palm-beach-directory.vercel.app/stores" },
+    { name: store.name, url: `https://palm-beach-directory.vercel.app/stores/${slug}` },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-sand/10 to-white">
+      <LocalBusinessSchema
+        name={store.name}
+        description={store.description}
+        address={store.address}
+        phone={store.phone}
+        website={store.website}
+        categories={store.categories}
+        rating={store.rating}
+        reviewCount={store.reviewCount}
+        priceRange={store.priceRange}
+        hours={store.hours}
+      />
+      {store.welcomeOffer && (
+        <OfferSchema
+          name={store.welcomeOffer.title}
+          description={store.welcomeOffer.description}
+          validFrom="2025-01-01"
+          validThrough={store.welcomeOffer.validUntil}
+          businessName={store.name}
+          url={`https://palm-beach-directory.vercel.app/stores/${slug}`}
+        />
+      )}
+      <BreadcrumbSchema items={breadcrumbItems} />
       {/* Hero Section */}
       <section className="relative py-20 px-4">
         <div className="max-w-6xl mx-auto">

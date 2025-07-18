@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Car, Star } from "lucide-react";
+import { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/StructuredData";
 
 // Mock area data
 interface Area {
@@ -163,6 +165,39 @@ interface Props {
   }>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const area = areaData[slug];
+
+  if (!area) {
+    return {
+      title: "Area Not Found | Palm Beach Luxury Guide",
+      description: "The shopping area you're looking for doesn't exist in our Palm Beach directory."
+    };
+  }
+
+  return {
+    title: `${area.name} Shopping | ${area.stores.length}+ Luxury Stores & Boutiques`,
+    description: `${area.description} Discover ${area.stores.length}+ stores including ${area.stores.slice(0, 3).map(s => s.name).join(', ')}. Parking info, hours, and exclusive offers.`,
+    keywords: `${area.name}, Palm Beach shopping, ${area.highlights.join(', ')}, luxury boutiques, shopping guide`,
+    openGraph: {
+      title: `${area.name} | Palm Beach Shopping District`,
+      description: area.description,
+      type: "website",
+      locale: "en_US",
+      siteName: "Palm Beach Luxury Guide",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${area.name} Shopping | Palm Beach`,
+      description: area.description,
+    },
+    alternates: {
+      canonical: `https://palm-beach-directory.vercel.app/areas/${slug}`,
+    },
+  };
+}
+
 export default async function AreaPage({ params }: Props) {
   const { slug } = await params;
   const area = areaData[slug];
@@ -181,8 +216,15 @@ export default async function AreaPage({ params }: Props) {
     );
   }
 
+  const breadcrumbItems = [
+    { name: "Home", url: "https://palm-beach-directory.vercel.app" },
+    { name: "Areas", url: "https://palm-beach-directory.vercel.app/areas" },
+    { name: area.name, url: `https://palm-beach-directory.vercel.app/areas/${slug}` },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-sand/10 to-white">
+      <BreadcrumbSchema items={breadcrumbItems} />
       {/* Hero Section */}
       <section className="relative py-20 px-4">
         <div className="max-w-6xl mx-auto">
