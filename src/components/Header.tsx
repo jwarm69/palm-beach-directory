@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import SearchBar from "@/components/SearchBar";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,8 +20,13 @@ export default function Header() {
             </h1>
           </Link>
 
+          {/* Search Bar - Desktop */}
+          <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
+            <SearchBar size="sm" />
+          </div>
+
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/stores"
               className="text-gray-700 hover:text-navy transition-colors font-medium"
@@ -38,6 +44,18 @@ export default function Header() {
               className="text-gray-700 hover:text-navy transition-colors font-medium"
             >
               Offers
+            </Link>
+            <Link
+              href="/events"
+              className="text-gray-700 hover:text-navy transition-colors font-medium"
+            >
+              Events
+            </Link>
+            <Link
+              href="/concierge"
+              className="text-gray-700 hover:text-navy transition-colors font-medium"
+            >
+              Concierge
             </Link>
             <Link
               href="/about"
@@ -78,6 +96,11 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-sand/20">
             <div className="flex flex-col space-y-4">
+              {/* Mobile Search */}
+              <div className="lg:hidden">
+                <SearchBar size="md" placeholder="Search..." />
+              </div>
+              
               <Link
                 href="/stores"
                 className="text-gray-700 hover:text-navy transition-colors font-medium"
@@ -98,6 +121,20 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Offers
+              </Link>
+              <Link
+                href="/events"
+                className="text-gray-700 hover:text-navy transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Events
+              </Link>
+              <Link
+                href="/concierge"
+                className="text-gray-700 hover:text-navy transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Concierge
               </Link>
               <Link
                 href="/about"
