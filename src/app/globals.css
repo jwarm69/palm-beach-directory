@@ -122,6 +122,22 @@
     @apply shadow-glass-glow transform scale-[1.02];
   }
   
+  .btn-sage {
+    @apply relative bg-sage text-white px-8 py-4 rounded-xl hover:bg-sage/90 transition-all duration-500 shadow-luxury-deep font-medium;
+  }
+  
+  .btn-sage:hover {
+    @apply shadow-luxury-glow transform scale-[1.02];
+  }
+  
+  .btn-navy {
+    @apply relative bg-navy text-white px-8 py-4 rounded-xl hover:bg-navy/90 transition-all duration-500 shadow-luxury-deep font-medium;
+  }
+  
+  .btn-navy:hover {
+    @apply shadow-luxury-glow transform scale-[1.02];
+  }
+  
   /* Enhanced Card Components */
   .card-luxury {
     @apply relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-luxury-card border border-white/20 overflow-hidden hover:shadow-luxury-hover transition-all duration-500;

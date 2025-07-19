@@ -8,13 +8,32 @@ interface User {
   firstName: string;
   lastName: string;
   phone?: string;
+  bio?: string;
   membershipTier: 'standard' | 'premium' | 'vip';
   joinDate: string;
   avatar?: string;
-  preferences: {
-    categories: string[];
-    priceRange: string[];
-    areas: string[];
+  preferences?: {
+    categories?: string[];
+    priceRange?: string[];
+    areas?: string[];
+    emailNotifications?: boolean;
+    smsNotifications?: boolean;
+    offerAlerts?: boolean;
+    eventNotifications?: boolean;
+    newsletterSubscription?: boolean;
+    marketingEmails?: boolean;
+    personalizedRecommendations?: boolean;
+  };
+  shopping?: {
+    favoriteCategories?: string[];
+    budgetRange?: string;
+    preferredAreas?: string[];
+    stylingPreferences?: string;
+    sizeInformation?: {
+      clothing?: string;
+      shoes?: string;
+      accessories?: string;
+    };
   };
   stats: {
     eventsAttended: number;
@@ -30,6 +49,7 @@ interface AuthContextType {
   signup: (userData: SignupData) => Promise<boolean>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => Promise<boolean>;
+  updateUser?: (data: Partial<User>) => Promise<boolean>;
   isAuthenticated: boolean;
 }
 
@@ -56,7 +76,25 @@ const MOCK_USERS: User[] = [
     preferences: {
       categories: ["Women's Fashion", "Jewelry"],
       priceRange: ["$$$$"],
-      areas: ["Worth Avenue"]
+      areas: ["Worth Avenue"],
+      emailNotifications: true,
+      smsNotifications: false,
+      offerAlerts: true,
+      eventNotifications: true,
+      newsletterSubscription: true,
+      marketingEmails: false,
+      personalizedRecommendations: true
+    },
+    shopping: {
+      favoriteCategories: ["Women's Fashion", "Jewelry", "Beauty & Cosmetics"],
+      budgetRange: "over-5000",
+      preferredAreas: ["Worth Avenue"],
+      stylingPreferences: "Classic, elegant, and timeless pieces with a focus on quality craftsmanship",
+      sizeInformation: {
+        clothing: "8",
+        shoes: "7.5",
+        accessories: "6.5"
+      }
     },
     stats: {
       eventsAttended: 12,
@@ -74,7 +112,25 @@ const MOCK_USERS: User[] = [
     preferences: {
       categories: ["Men's Fashion", "Luxury Goods"],
       priceRange: ["$$$", "$$$$"],
-      areas: ["Worth Avenue", "Royal Poinciana"]
+      areas: ["Worth Avenue", "Royal Poinciana"],
+      emailNotifications: true,
+      smsNotifications: true,
+      offerAlerts: true,
+      eventNotifications: false,
+      newsletterSubscription: true,
+      marketingEmails: true,
+      personalizedRecommendations: true
+    },
+    shopping: {
+      favoriteCategories: ["Men's Fashion", "Luxury Goods", "Art & Antiques"],
+      budgetRange: "2500-5000",
+      preferredAreas: ["Worth Avenue", "Royal Poinciana"],
+      stylingPreferences: "Modern sophisticated style with investment pieces and unique accessories",
+      sizeInformation: {
+        clothing: "L",
+        shoes: "10.5",
+        accessories: "9"
+      }
     },
     stats: {
       eventsAttended: 5,
@@ -206,6 +262,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  const updateUser = async (data: Partial<User>): Promise<boolean> => {
+    if (!user) return false;
+    
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const updatedUser = { 
+      ...user, 
+      ...data,
+      preferences: { ...user.preferences, ...data.preferences },
+      shopping: { ...user.shopping, ...data.shopping }
+    };
+    setUser(updatedUser);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('palmbeach_user', JSON.stringify(updatedUser));
+    }
+    
+    setIsLoading(false);
+    return true;
+  };
+
   const value: AuthContextType = {
     user,
     isLoading,
@@ -213,6 +292,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signup,
     logout,
     updateProfile,
+    updateUser,
     isAuthenticated: !!user
   };
 
