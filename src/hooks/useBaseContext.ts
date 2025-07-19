@@ -225,6 +225,7 @@ export function useErrorHandler() {
 
   const clearError = useCallback((key: string) => {
     setErrors(prev => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _, ...rest } = prev;
       return rest;
     });

@@ -5,9 +5,6 @@ import type {
   Offer, 
   Event, 
   FavoriteStore, 
-  ClaimedOffer, 
-  EventBooking, 
-  ConciergeBooking,
   User 
 } from '@/types'
 
@@ -78,6 +75,11 @@ export async function getAreaBySlug(slug: string): Promise<Area | null> {
 // ============================================================================
 
 export async function getStores(): Promise<Store[]> {
+  // Return empty array if Supabase is not configured (during build)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'your_supabase_project_url') {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('stores')
     .select(`
@@ -215,6 +217,11 @@ export async function getStoresByArea(areaId: string): Promise<Store[]> {
 // ============================================================================
 
 export async function getOffers(): Promise<Offer[]> {
+  // Return empty array if Supabase is not configured (during build)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'your_supabase_project_url') {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('offers')
     .select(`
@@ -380,7 +387,7 @@ export async function getUserProfile(userId: string): Promise<User | null> {
 }
 
 export async function updateUserProfile(userId: string, updates: Partial<User>): Promise<boolean> {
-  const profileUpdates: any = {
+  const profileUpdates: Record<string, unknown> = {
     updated_at: new Date().toISOString()
   }
 

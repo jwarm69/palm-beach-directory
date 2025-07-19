@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import StoreFilters from "@/components/StoreFilters";
 import { getStores } from "@/lib/database";
 import type { Store } from "@/types";
-import { LoadingState } from "@/components/ui/loading";
+import { Loading } from "@/components/ui/loading";
 
 export default function StoresPage() {
   const [stores, setStores] = useState<Store[]>([]);
@@ -72,15 +72,12 @@ export default function StoresPage() {
     });
   }, [stores, filters]);
 
-  const handleFilterChange = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sand-50 to-sage-50">
         <div className="container mx-auto px-6 py-20">
-          <LoadingState />
+          <Loading message="Loading luxury stores..." size="lg" />
         </div>
       </div>
     );
@@ -95,7 +92,7 @@ export default function StoresPage() {
             Luxury Shopping Directory
           </h1>
           <p className="text-xl text-navy-600 max-w-3xl mx-auto leading-relaxed">
-            Discover Palm Beach's finest boutiques, galleries, and luxury retailers. 
+            Discover Palm Beach&apos;s finest boutiques, galleries, and luxury retailers. 
             Each store is carefully curated to provide an exceptional shopping experience.
           </p>
           <div className="flex items-center justify-center gap-4 mt-8">
@@ -113,9 +110,22 @@ export default function StoresPage() {
         {/* Filters */}
         <div className="mb-12">
           <StoreFilters 
-            stores={stores} 
-            onFilterChange={handleFilterChange}
-            filters={filters}
+            onFiltersChange={(newFilters) => {
+              setFilters({
+                areas: newFilters.areas,
+                categories: newFilters.categories,
+                priceRanges: newFilters.priceRanges,
+                amenities: newFilters.amenities,
+                searchQuery: newFilters.search
+              });
+            }}
+            initialFilters={{
+              areas: filters.areas,
+              categories: filters.categories,
+              priceRanges: filters.priceRanges,
+              amenities: filters.amenities,
+              search: filters.searchQuery
+            }}
           />
         </div>
 
@@ -217,7 +227,7 @@ export default function StoresPage() {
               Ready to Start Shopping?
             </h3>
             <p className="text-xl text-navy-600 mb-8 max-w-2xl mx-auto">
-              Join our exclusive community and unlock special offers from Palm Beach's finest retailers.
+              Join our exclusive community and unlock special offers from Palm Beach&apos;s finest retailers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/offers">

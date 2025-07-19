@@ -92,7 +92,7 @@ export function getFileUrl(bucket: StorageBucket, path: string): string {
 export async function listFiles(
   bucket: StorageBucket,
   folder?: string
-): Promise<any[]> {
+): Promise<Array<{ name: string; id: string; updated_at: string; created_at: string; last_accessed_at: string; metadata: Record<string, unknown> }>> {
   try {
     const { data, error } = await supabase.storage
       .from(bucket)

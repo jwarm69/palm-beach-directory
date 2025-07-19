@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface ClaimedOffer {
   id: string;
-  offerId: number;
+  offerId: string;
   offerTitle: string;
   offerValue: string;
   storeName: string;
@@ -26,24 +26,21 @@ interface OfferRedemptionContextType {
   isLoading: boolean;
   claimOffer: (offerData: OfferData) => Promise<boolean>;
   redeemOffer: (claimedOfferId: string, location?: string) => Promise<boolean>;
-  getClaimedOffer: (offerId: number) => ClaimedOffer | undefined;
-  isOfferClaimed: (offerId: number) => boolean;
+  getClaimedOffer: (offerId: string) => ClaimedOffer | undefined;
+  isOfferClaimed: (offerId: string) => boolean;
   getActiveOffers: () => ClaimedOffer[];
   getRedeemedOffers: () => ClaimedOffer[];
   getTotalSavings: () => number;
 }
 
 interface OfferData {
-  id: number;
+  id: string;
   title: string;
   value: string;
-  store: {
-    name: string;
-    slug: string;
-  };
+  store: string;
+  storeSlug: string;
   validUntil: string;
-  terms: string;
-  avgSavings: string;
+  terms?: string[];
 }
 
 const OfferRedemptionContext = createContext<OfferRedemptionContextType | undefined>(undefined);
@@ -95,7 +92,7 @@ export function OfferRedemptionProvider({ children }: { children: ReactNode }) {
       type: 'palm_beach_offer',
       offerId: offer.id,
       redemptionCode,
-      storeSlug: offer.store.slug,
+      storeSlug: offer.storeSlug,
       validUntil: offer.validUntil,
       timestamp: new Date().toISOString()
     };
@@ -135,15 +132,15 @@ export function OfferRedemptionProvider({ children }: { children: ReactNode }) {
         offerId: offerData.id,
         offerTitle: offerData.title,
         offerValue: offerData.value,
-        storeName: offerData.store.name,
-        storeSlug: offerData.store.slug,
+        storeName: offerData.store,
+        storeSlug: offerData.storeSlug,
         claimedAt: new Date().toISOString(),
         expiresAt: expiresAt.toISOString(),
         status: 'active',
         redemptionCode,
         qrCodeData,
-        terms: offerData.terms,
-        savingsAmount: parseInt(offerData.avgSavings.replace(/[^\d]/g, '')) || 0
+        terms: Array.isArray(offerData.terms) ? offerData.terms.join('. ') : '',
+        savingsAmount: 0
       };
       
       setClaimedOffers(prev => [...prev, newClaim]);
@@ -187,13 +184,13 @@ export function OfferRedemptionProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getClaimedOffer = (offerId: number): ClaimedOffer | undefined => {
+  const getClaimedOffer = (offerId: string): ClaimedOffer | undefined => {
     return claimedOffers.find(offer => 
       offer.offerId === offerId && offer.status !== 'expired'
     );
   };
 
-  const isOfferClaimed = (offerId: number): boolean => {
+  const isOfferClaimed = (offerId: string): boolean => {
     return claimedOffers.some(offer => 
       offer.offerId === offerId && offer.status !== 'expired'
     );

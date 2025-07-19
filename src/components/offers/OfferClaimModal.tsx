@@ -76,7 +76,7 @@ export default function OfferClaimModal({ isOpen, onClose, offer }: OfferClaimMo
                 <h4 className="font-semibold text-green-800 mb-2">What&apos;s Next?</h4>
                 <ul className="text-sm text-green-700 space-y-1">
                   <li>&bull; Visit your My Offers page to view your digital pass</li>
-                  <li>&bull; Show the QR code at {offer.store.name} checkout</li>
+                  <li>&bull; Show the QR code at {offer.store} checkout</li>
                   <li>&bull; Enjoy your exclusive discount or service</li>
                   <li>&bull; Your savings will be tracked automatically</li>
                 </ul>
@@ -87,7 +87,7 @@ export default function OfferClaimModal({ isOpen, onClose, offer }: OfferClaimMo
                 <div className="space-y-1 text-sm text-gray-600">
                   <p><strong>Offer:</strong> {offer.title}</p>
                   <p><strong>Value:</strong> {offer.value}</p>
-                  <p><strong>Store:</strong> {offer.store.name}</p>
+                  <p><strong>Store:</strong> {offer.store}</p>
                   <p><strong>Expires:</strong> {formatExpiryDate()}</p>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function OfferClaimModal({ isOpen, onClose, offer }: OfferClaimMo
               <div className="flex-1">
                 <CardTitle className="text-luxury text-xl pr-8">{offer.title}</CardTitle>
                 <CardDescription className="text-gray-600">
-                  Exclusive offer from {offer.store.name}
+                  Exclusive offer from {offer.store}
                 </CardDescription>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function OfferClaimModal({ isOpen, onClose, offer }: OfferClaimMo
                 {offer.value}
               </Badge>
               <Badge variant="outline" className="bg-sage/10 text-sage border-sage/30">
-                Avg. Savings: {offer.avgSavings}
+                Exclusive Deal
               </Badge>
             </div>
           </CardHeader>
@@ -178,7 +178,7 @@ export default function OfferClaimModal({ isOpen, onClose, offer }: OfferClaimMo
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-coral mt-0.5" />
                 <div>
-                  <p className="font-medium text-gray-900">{offer.store.name}</p>
+                  <p className="font-medium text-gray-900">{offer.store}</p>
                   <p className="text-sm text-gray-600">Show your QR code at checkout</p>
                   <p className="text-sm text-gray-600">Staff will scan and apply your discount</p>
                 </div>

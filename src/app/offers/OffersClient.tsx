@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Gift, Percent, Star, Clock, TrendingUp, Users, Zap, Flame } from "lucide-react";
+import { Gift, Percent, Star, Clock, Zap, Flame } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfferRedemption } from "@/contexts/OfferRedemptionContext";
 import OfferClaimModal from "@/components/offers/OfferClaimModal";
 import { getOffers } from "@/lib/database";
 import type { Offer } from "@/types";
-import { LoadingState } from "@/components/ui/loading";
+import { Loading } from "@/components/ui/loading";
 
 export default function OffersClient() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -88,7 +88,7 @@ export default function OffersClient() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sand-50 to-sage-50">
         <div className="container mx-auto px-6 py-20">
-          <LoadingState />
+          <Loading message="Loading exclusive offers..." size="lg" />
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ export default function OffersClient() {
             Exclusive Welcome Offers
           </h1>
           <p className="text-xl text-navy-600 max-w-3xl mx-auto leading-relaxed">
-            Unlock special privileges at Palm Beach's finest stores. 
+            Unlock special privileges at Palm Beach&apos;s finest stores. 
             These exclusive offers are available only to first-time visitors through our directory.
           </p>
         </div>
@@ -280,10 +280,10 @@ export default function OffersClient() {
         <div className="mt-20 text-center">
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-12 border border-white/40">
             <h3 className="text-3xl font-bold text-navy-800 mb-4">
-              Don't Miss Out on These Exclusive Deals
+              Don&apos;t Miss Out on These Exclusive Deals
             </h3>
             <p className="text-xl text-navy-600 mb-8 max-w-2xl mx-auto">
-              Join our community today and get instant access to member-only offers from Palm Beach's finest retailers.
+              Join our community today and get instant access to member-only offers from Palm Beach&apos;s finest retailers.
             </p>
             {!isAuthenticated && (
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
