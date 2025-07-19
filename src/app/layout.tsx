@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { OrganizationSchema } from "@/components/StructuredData";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BookingProvider } from "@/contexts/BookingContext";
 
 export const metadata: Metadata = {
   title: "Palm Beach Luxury Guide - Discover Worth Avenue's Finest",
@@ -77,16 +78,18 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <AuthProvider>
-          <OrganizationSchema
-            name="Palm Beach Luxury Guide"
-            description="Your definitive guide to Palm Beach's premier shopping destinations"
-            url="https://palm-beach-directory.vercel.app"
-            logo="https://palm-beach-directory.vercel.app/logo.png"
-          />
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
+          <BookingProvider>
+            <OrganizationSchema
+              name="Palm Beach Luxury Guide"
+              description="Your definitive guide to Palm Beach's premier shopping destinations"
+              url="https://palm-beach-directory.vercel.app"
+              logo="https://palm-beach-directory.vercel.app/logo.png"
+            />
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </BookingProvider>
         </AuthProvider>
       </body>
     </html>

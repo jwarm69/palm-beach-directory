@@ -3,6 +3,9 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import EventBookingModal from "@/components/booking/EventBookingModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface Event {
   id: number;
@@ -144,6 +147,11 @@ const eventTypes = [
 export default function EventsPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  
+  const { isAuthenticated } = useAuth();
+  const { isEventBooked } = useBooking();
 
   const filteredEvents = useMemo(() => {
     let filtered = events;
@@ -187,9 +195,26 @@ export default function EventsPage() {
     if (!event.maxAttendees) return null;
     const percentage = (event.currentAttendees / event.maxAttendees) * 100;
     
+    if (percentage >= 100) return { status: 'sold-out', color: 'text-red-600', text: 'Sold Out' };
     if (percentage >= 90) return { status: 'limited', color: 'text-coral', text: 'Almost Full' };
     if (percentage >= 70) return { status: 'filling', color: 'text-gold', text: 'Filling Fast' };
     return { status: 'available', color: 'text-sage', text: 'Available' };
+  };
+
+  const handleBookEvent = (event: Event) => {
+    setSelectedEvent(event);
+    setShowBookingModal(true);
+  };
+
+  const getBookingButtonText = (event: Event) => {
+    if (isEventBooked(event.id.toString())) return 'Booked ✓';
+    if (!isAuthenticated) return 'Sign In to RSVP';
+    if (event.maxAttendees && event.currentAttendees >= event.maxAttendees) return 'Sold Out';
+    return event.requiresRSVP ? 'RSVP' : 'Learn More';
+  };
+
+  const isBookingDisabled = (event: Event): boolean => {
+    return !!(event.maxAttendees && event.currentAttendees >= event.maxAttendees);
   };
 
   return (
@@ -386,8 +411,20 @@ export default function EventsPage() {
                             )}
                           </div>
                           
-                          <Button size="sm" className="btn-gold">
-                            {event.requiresRSVP ? 'RSVP' : 'Learn More'}
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleBookEvent(event)}
+                            disabled={isBookingDisabled(event)}
+                            className={`
+                              ${isEventBooked(event.id.toString()) 
+                                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                : isBookingDisabled(event) 
+                                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  : 'btn-gold'
+                              }
+                            `}
+                          >
+                            {getBookingButtonText(event)}
                           </Button>
                         </div>
                       </div>
@@ -448,6 +485,18 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* Booking Modal */}
+      {selectedEvent && (
+        <EventBookingModal
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false);
+            setSelectedEvent(null);
+          }}
+          event={selectedEvent}
+        />
+      )}
     </div>
   );
 }
