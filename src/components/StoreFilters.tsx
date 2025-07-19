@@ -251,7 +251,7 @@ export default function StoreFilters({ onFiltersChange, initialFilters = {} }: S
               
               {filters.search && (
                 <span className="inline-flex items-center gap-1 bg-navy text-white text-xs px-2 py-1 rounded-full">
-                  Search: "{filters.search}"
+                  Search: &ldquo;{filters.search}&rdquo;
                   <button 
                     onClick={() => setFilters(prev => ({ ...prev, search: "" }))}
                     className="hover:bg-white/20 rounded-full p-0.5"
