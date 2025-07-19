@@ -89,11 +89,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
-    const storedUser = localStorage.getItem('palmbeach_user');
-    if (storedUser) {
+    // Check for existing session on mount - only run on client
+    if (typeof window !== 'undefined') {
       try {
-        setUser(JSON.parse(storedUser));
+        const storedUser = localStorage.getItem('palmbeach_user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          // Validate the stored user has required fields
+          if (parsedUser && parsedUser.id && parsedUser.email) {
+            setUser(parsedUser);
+          } else {
+            localStorage.removeItem('palmbeach_user');
+          }
+        }
       } catch (error) {
         console.error('Failed to parse stored user:', error);
         localStorage.removeItem('palmbeach_user');
@@ -105,21 +113,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock authentication - in real app, this would be an API call
-    const mockUser = MOCK_USERS.find(u => u.email === email);
-    
-    if (mockUser && password === "password123") {
-      setUser(mockUser);
-      localStorage.setItem('palmbeach_user', JSON.stringify(mockUser));
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Mock authentication - in real app, this would be an API call
+      const mockUser = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
+      
+      if (mockUser && password === "password123") {
+        setUser(mockUser);
+        // Only use localStorage on client side
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('palmbeach_user', JSON.stringify(mockUser));
+        }
+        setIsLoading(false);
+        return true;
+      }
+      
       setIsLoading(false);
-      return true;
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      setIsLoading(false);
+      return false;
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
   const signup = async (userData: SignupData): Promise<boolean> => {
@@ -157,14 +174,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     
     setUser(newUser);
-    localStorage.setItem('palmbeach_user', JSON.stringify(newUser));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('palmbeach_user', JSON.stringify(newUser));
+    }
     setIsLoading(false);
     return true;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('palmbeach_user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('palmbeach_user');
+    }
   };
 
   const updateProfile = async (data: Partial<User>): Promise<boolean> => {
@@ -177,7 +198,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const updatedUser = { ...user, ...data };
     setUser(updatedUser);
-    localStorage.setItem('palmbeach_user', JSON.stringify(updatedUser));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('palmbeach_user', JSON.stringify(updatedUser));
+    }
     
     setIsLoading(false);
     return true;
