@@ -1,6 +1,9 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { supabase } from '@/lib/supabase';
+import { getUserProfile, updateUserProfile } from '@/lib/database';
+import type { User as AuthUser } from '@supabase/supabase-js';
 
 interface User {
   id: string;
@@ -63,131 +66,74 @@ interface SignupData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock user data for demo purposes
-const MOCK_USERS: User[] = [
-  {
-    id: "1",
-    email: "catherine@example.com",
-    firstName: "Catherine",
-    lastName: "Worthington",
-    phone: "(561) 555-0123",
-    membershipTier: "vip",
-    joinDate: "2024-01-15",
-    preferences: {
-      categories: ["Women's Fashion", "Jewelry"],
-      priceRange: ["$$$$"],
-      areas: ["Worth Avenue"],
-      emailNotifications: true,
-      smsNotifications: false,
-      offerAlerts: true,
-      eventNotifications: true,
-      newsletterSubscription: true,
-      marketingEmails: false,
-      personalizedRecommendations: true
-    },
-    shopping: {
-      favoriteCategories: ["Women's Fashion", "Jewelry", "Beauty & Cosmetics"],
-      budgetRange: "over-5000",
-      preferredAreas: ["Worth Avenue"],
-      stylingPreferences: "Classic, elegant, and timeless pieces with a focus on quality craftsmanship",
-      sizeInformation: {
-        clothing: "8",
-        shoes: "7.5",
-        accessories: "6.5"
-      }
-    },
-    stats: {
-      eventsAttended: 12,
-      conciergeBookings: 8,
-      favoriteStores: 15
-    }
-  },
-  {
-    id: "2",
-    email: "james@example.com",
-    firstName: "James",
-    lastName: "Patterson",
-    membershipTier: "premium",
-    joinDate: "2024-03-20",
-    preferences: {
-      categories: ["Men's Fashion", "Luxury Goods"],
-      priceRange: ["$$$", "$$$$"],
-      areas: ["Worth Avenue", "Royal Poinciana"],
-      emailNotifications: true,
-      smsNotifications: true,
-      offerAlerts: true,
-      eventNotifications: false,
-      newsletterSubscription: true,
-      marketingEmails: true,
-      personalizedRecommendations: true
-    },
-    shopping: {
-      favoriteCategories: ["Men's Fashion", "Luxury Goods", "Art & Antiques"],
-      budgetRange: "2500-5000",
-      preferredAreas: ["Worth Avenue", "Royal Poinciana"],
-      stylingPreferences: "Modern sophisticated style with investment pieces and unique accessories",
-      sizeInformation: {
-        clothing: "L",
-        shoes: "10.5",
-        accessories: "9"
-      }
-    },
-    stats: {
-      eventsAttended: 5,
-      conciergeBookings: 3,
-      favoriteStores: 8
-    }
-  }
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount - only run on client
-    if (typeof window !== 'undefined') {
-      try {
-        const storedUser = localStorage.getItem('palmbeach_user');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          // Validate the stored user has required fields
-          if (parsedUser && parsedUser.id && parsedUser.email) {
-            setUser(parsedUser);
-          } else {
-            localStorage.removeItem('palmbeach_user');
-          }
-        }
-      } catch (error) {
-        console.error('Failed to parse stored user:', error);
-        localStorage.removeItem('palmbeach_user');
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await loadUserProfile(session.user);
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        await loadUserProfile(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  const loadUserProfile = async (authUser: AuthUser) => {
+    try {
+      const profile = await getUserProfile(authUser.id);
+      if (profile) {
+        setUser({
+          ...profile,
+          email: authUser.email || '',
+          stats: {
+            eventsAttended: 0, // TODO: Calculate from bookings
+            conciergeBookings: 0, // TODO: Calculate from bookings
+            favoriteStores: 0 // TODO: Calculate from favorites
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Mock authentication - in real app, this would be an API call
-      const mockUser = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      
-      if (mockUser && password === "password123") {
-        setUser(mockUser);
-        // Only use localStorage on client side
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('palmbeach_user', JSON.stringify(mockUser));
-        }
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        console.error('Login error:', error);
         setIsLoading(false);
-        return true;
+        return false;
+      }
+
+      if (data.user) {
+        await loadUserProfile(data.user);
       }
       
       setIsLoading(false);
-      return false;
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       setIsLoading(false);
@@ -198,50 +144,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (userData: SignupData): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock signup - check if email already exists
-    const existingUser = MOCK_USERS.find(u => u.email === userData.email);
-    if (existingUser) {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            first_name: userData.firstName,
+            last_name: userData.lastName
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Signup error:', error);
+        setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
+        // Profile will be created automatically by the database trigger
+        await loadUserProfile(data.user);
+      }
+      
+      setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error('Signup error:', error);
       setIsLoading(false);
       return false;
     }
-    
-    // Create new user
-    const newUser: User = {
-      id: Date.now().toString(),
-      email: userData.email,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      phone: userData.phone,
-      membershipTier: 'standard',
-      joinDate: new Date().toISOString().split('T')[0],
-      preferences: {
-        categories: [],
-        priceRange: [],
-        areas: []
-      },
-      stats: {
-        eventsAttended: 0,
-        conciergeBookings: 0,
-        favoriteStores: 0
-      }
-    };
-    
-    setUser(newUser);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('palmbeach_user', JSON.stringify(newUser));
-    }
-    setIsLoading(false);
-    return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('palmbeach_user');
-    }
   };
 
   const updateProfile = async (data: Partial<User>): Promise<boolean> => {
@@ -249,17 +186,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const updatedUser = { ...user, ...data };
-    setUser(updatedUser);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('palmbeach_user', JSON.stringify(updatedUser));
+    try {
+      const success = await updateUserProfile(user.id, data);
+      if (success) {
+        await loadUserProfile({ id: user.id, email: user.email } as AuthUser);
+      }
+      setIsLoading(false);
+      return success;
+    } catch (error) {
+      console.error('Update profile error:', error);
+      setIsLoading(false);
+      return false;
     }
-    
-    setIsLoading(false);
-    return true;
   };
 
   const updateUser = async (data: Partial<User>): Promise<boolean> => {
@@ -267,22 +205,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const updatedUser = { 
-      ...user, 
-      ...data,
-      preferences: { ...user.preferences, ...data.preferences },
-      shopping: { ...user.shopping, ...data.shopping }
-    };
-    setUser(updatedUser);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('palmbeach_user', JSON.stringify(updatedUser));
+    try {
+      const success = await updateUserProfile(user.id, data);
+      if (success) {
+        await loadUserProfile({ id: user.id, email: user.email } as AuthUser);
+      }
+      setIsLoading(false);
+      return success;
+    } catch (error) {
+      console.error('Update user error:', error);
+      setIsLoading(false);
+      return false;
     }
-    
-    setIsLoading(false);
-    return true;
   };
 
   const value: AuthContextType = {

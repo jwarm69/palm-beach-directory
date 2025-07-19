@@ -8,630 +8,298 @@ import { Gift, Percent, Star, Clock, TrendingUp, Users, Zap, Flame } from "lucid
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfferRedemption } from "@/contexts/OfferRedemptionContext";
 import OfferClaimModal from "@/components/offers/OfferClaimModal";
-
-// Enhanced offers with urgency and tracking
-const offers = [
-  {
-    id: 1,
-    title: "Flash Weekend Special",
-    description: "Enjoy 20% off your first purchase and a complimentary styling consultation with our personal shopper. Limited time only!",
-    type: "percent",
-    value: "20%",
-    originalValue: "15%",
-    store: {
-      name: "C. Orrico",
-      slug: "c-orrico",
-      area: "Worth Avenue"
-    },
-    terms: "Valid for new customers only. Cannot be combined with other offers. Minimum purchase of $200 required.",
-    validUntil: "2025-01-26T23:59:59",
-    isExclusive: true,
-    isFlash: true,
-    maxClaims: 25,
-    currentClaims: 18,
-    recentActivity: ["Sarah claimed 2m ago", "Michael saved $150", "Emma just visited"],
-    avgSavings: "$275",
-    popularityScore: 95
-  },
-  {
-    id: 2,
-    title: "VIP Jewelry Experience",
-    description: "Book a private consultation with our jewelry specialist, receive complimentary cleaning, and enjoy champagne service.",
-    type: "experience",
-    value: "Premium Service",
-    store: {
-      name: "Tiffany & Co.",
-      slug: "tiffany-co",
-      area: "Worth Avenue"
-    },
-    terms: "By appointment only. Valid for first-time visitors. 48-hour notice required.",
-    validUntil: "2025-02-28T23:59:59",
-    isExclusive: true,
-    isFlash: false,
-    maxClaims: 12,
-    currentClaims: 8,
-    recentActivity: ["Booked by Catherine", "5-star experience", "Alexandra loved it"],
-    avgSavings: "$200",
-    popularityScore: 88
-  },
-  {
-    id: 3,
-    title: "New Customer Welcome",
-    description: "Receive a luxury gift with your first purchase over $150 plus 10% off your entire order.",
-    type: "gift",
-    value: "Gift + 10% Off",
-    store: {
-      name: "Stubbs & Wootton",
-      slug: "stubbs-wootton",
-      area: "Worth Avenue"
-    },
-    terms: "Minimum purchase of $150. Gift while supplies last. One per customer.",
-    validUntil: "2025-01-31T23:59:59",
-    isExclusive: false,
-    isFlash: false,
-    maxClaims: 50,
-    currentClaims: 31,
-    recentActivity: ["Gift claimed by James", "Limited stock warning", "Popular this week"],
-    avgSavings: "$95",
-    popularityScore: 72
-  },
-  {
-    id: 4,
-    title: "Styling Session + Rewards",
-    description: "Complimentary one-hour personal shopping session with style consultant plus $50 credit for future purchases.",
-    type: "experience",
-    value: "Session + $50 Credit",
-    store: {
-      name: "The Colony Shop",
-      slug: "colony-shop",
-      area: "Royal Poinciana"
-    },
-    terms: "By appointment only. Available Monday-Friday. Credit expires in 30 days.",
-    validUntil: "2025-03-15T23:59:59",
-    isExclusive: false,
-    isFlash: false,
-    maxClaims: 30,
-    currentClaims: 12,
-    recentActivity: ["Appointment booked", "Great reviews", "Book ahead recommended"],
-    avgSavings: "$125",
-    popularityScore: 81
-  },
-  {
-    id: 5,
-    title: "Triple Welcome Bonus",
-    description: "15% off entire purchase + free newsletter signup gift + priority access to sales. Best value offer!",
-    type: "percent",
-    value: "15% + Extras",
-    store: {
-      name: "Rapunzel's Closet",
-      slug: "rapunzels-closet",
-      area: "CityPlace"
-    },
-    terms: "Valid for new newsletter subscribers. Gifts while supplies last. One-time use only.",
-    validUntil: "2025-02-14T23:59:59",
-    isExclusive: false,
-    isFlash: false,
-    maxClaims: 100,
-    currentClaims: 43,
-    recentActivity: ["Newsletter signup popular", "Triple bonus trending", "Great value"],
-    avgSavings: "$85",
-    popularityScore: 79
-  }
-];
-
-const getOfferIcon = (type: string, isFlash: boolean = false) => {
-  if (isFlash) {
-    return <Zap className="w-6 h-6 text-red-500 animate-pulse" />;
-  }
-  
-  switch (type) {
-    case "percent":
-      return <Percent className="w-6 h-6 text-gold" />;
-    case "experience":
-      return <Star className="w-6 h-6 text-coral" />;
-    case "gift":
-      return <Gift className="w-6 h-6 text-sage" />;
-    default:
-      return <Gift className="w-6 h-6 text-gold" />;
-  }
-};
-
-const getOfferColor = (type: string, isFlash: boolean = false) => {
-  if (isFlash) {
-    return "text-red-600 bg-red-50 ring-2 ring-red-200";
-  }
-  
-  switch (type) {
-    case "percent":
-      return "text-gold bg-gold/10";
-    case "experience":
-      return "text-coral bg-coral/10";
-    case "gift":
-      return "text-sage bg-sage/10";
-    default:
-      return "text-gold bg-gold/10";
-  }
-};
-
-function CountdownTimer({ endTime }: { endTime: string }) {
-  const [timeLeft, setTimeLeft] = useState("");
-  const [isUrgent, setIsUrgent] = useState(false);
-
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const difference = new Date(endTime).getTime() - new Date().getTime();
-      
-      if (difference > 0) {
-        const hours = Math.floor(difference / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        
-        setIsUrgent(hours < 24);
-        
-        if (hours < 1) {
-          setTimeLeft(`${minutes}m left`);
-        } else if (hours < 24) {
-          setTimeLeft(`${hours}h ${minutes}m left`);
-        } else {
-          const days = Math.floor(hours / 24);
-          setTimeLeft(`${days}d ${hours % 24}h left`);
-        }
-      } else {
-        setTimeLeft("Expired");
-      }
-    };
-
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
-
-    return () => clearInterval(timer);
-  }, [endTime]);
-
-  return (
-    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-      isUrgent ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-gray-100 text-gray-600'
-    }`}>
-      <Clock className="w-3 h-3" />
-      {timeLeft}
-    </div>
-  );
-}
-
-function ProgressBar({ current, max }: { current: number; max: number }) {
-  const percentage = (current / max) * 100;
-  const isAlmostFull = percentage > 80;
-  
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs">
-        <span className="text-gray-600">Claimed</span>
-        <span className={`font-medium ${isAlmostFull ? 'text-red-600' : 'text-gray-700'}`}>
-          {current}/{max}
-        </span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className={`h-2 rounded-full transition-all duration-300 ${
-            isAlmostFull ? 'bg-red-500' : percentage > 60 ? 'bg-yellow-500' : 'bg-green-500'
-          }`}
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-      {isAlmostFull && (
-        <p className="text-xs text-red-600 font-medium">Almost full! Claim soon</p>
-      )}
-    </div>
-  );
-}
-
-function ActivityFeed({ activities }: { activities: string[] }) {
-  return (
-    <div className="space-y-1">
-      {activities.slice(0, 2).map((activity, index) => (
-        <div key={index} className="flex items-center gap-2 text-xs text-gray-600">
-          <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-          {activity}
-        </div>
-      ))}
-    </div>
-  );
-}
+import { getOffers } from "@/lib/database";
+import type { Offer } from "@/types";
+import { LoadingState } from "@/components/ui/loading";
 
 export default function OffersClient() {
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [selectedOffer, setSelectedOffer] = useState<typeof offers[0] | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const { isAuthenticated } = useAuth();
   const { isOfferClaimed } = useOfferRedemption();
 
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        const offersData = await getOffers();
+        setOffers(offersData);
+      } catch (error) {
+        console.error('Error loading offers:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadOffers();
+  }, []);
+
   const filteredOffers = offers.filter(offer => {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "flash") return offer.isFlash;
-    if (selectedFilter === "exclusive") return offer.isExclusive;
+    if (selectedFilter === "featured") return offer.featured;
     return offer.type === selectedFilter;
   });
 
-  // Sort by popularity and urgency
-  const sortedOffers = [...filteredOffers].sort((a, b) => {
-    if (a.isFlash && !b.isFlash) return -1;
-    if (!a.isFlash && b.isFlash) return 1;
-    return b.popularityScore - a.popularityScore;
-  });
+  const handleClaimOffer = (offer: Offer) => {
+    setSelectedOffer(offer);
+    setShowClaimModal(true);
+  };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-sand/10 to-white">
-      {/* Flash Alert Banner */}
-      <div className="bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 text-center">
-        <div className="max-w-6xl mx-auto flex items-center justify-center gap-2">
-          <Flame className="w-5 h-5 animate-bounce" />
-          <span className="font-semibold">Flash Weekend Special Active!</span>
-          <span className="hidden sm:inline">Extra savings on C. Orrico - Limited time only</span>
-          <Flame className="w-5 h-5 animate-bounce" />
+  const getOfferIcon = (type: string) => {
+    switch (type) {
+      case "percent": return <Percent className="w-5 h-5" />;
+      case "dollar": return <span className="text-base font-bold">$</span>;
+      case "experience": return <Star className="w-5 h-5" />;
+      case "gift": return <Gift className="w-5 h-5" />;
+      default: return <Gift className="w-5 h-5" />;
+    }
+  };
+
+  const getOfferTypeColor = (type: string) => {
+    switch (type) {
+      case "percent": return "bg-coral-500";
+      case "dollar": return "bg-gold-500";
+      case "experience": return "bg-sage-500";
+      case "gift": return "bg-navy-500";
+      default: return "bg-navy-500";
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const isExpiringSoon = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return diffInDays <= 7;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sand-50 to-sage-50">
+        <div className="container mx-auto px-6 py-20">
+          <LoadingState />
         </div>
       </div>
+    );
+  }
 
-      {/* Header */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-display font-bold text-navy mb-6">
-            Irresistible Offers
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sand-50 to-sage-50">
+      <div className="container mx-auto px-6 py-20">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold bg-gradient-luxury bg-clip-text text-transparent mb-6">
+            Exclusive Welcome Offers
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Exclusive deals that luxury shoppers can&apos;t resist. Limited quantities, time-sensitive offers, 
-            and first-time visitor privileges you won&apos;t find anywhere else.
+          <p className="text-xl text-navy-600 max-w-3xl mx-auto leading-relaxed">
+            Unlock special privileges at Palm Beach's finest stores. 
+            These exclusive offers are available only to first-time visitors through our directory.
           </p>
-          
-          {/* Stats Row */}
-          <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-8">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-navy">156</div>
-              <div className="text-sm text-gray-600">Offers Claimed Today</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-navy">$12,450</div>
-              <div className="text-sm text-gray-600">Total Savings</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-navy">4.9★</div>
-              <div className="text-sm text-gray-600">Average Rating</div>
-            </div>
-          </div>
-          
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <Button 
-              variant={selectedFilter === "all" ? "default" : "outline"} 
-              className={selectedFilter === "all" ? "btn-luxury" : "bg-white"}
-              onClick={() => setSelectedFilter("all")}
-            >
-              All Offers
-            </Button>
-            <Button 
-              variant={selectedFilter === "flash" ? "default" : "outline"} 
-              className={selectedFilter === "flash" ? "btn-luxury" : "bg-white"}
-              onClick={() => setSelectedFilter("flash")}
-            >
-              <Zap className="w-4 h-4 mr-2 text-red-500" />
-              Flash Deals
-            </Button>
-            <Button 
-              variant={selectedFilter === "exclusive" ? "default" : "outline"} 
-              className={selectedFilter === "exclusive" ? "btn-luxury" : "bg-white"}
-              onClick={() => setSelectedFilter("exclusive")}
-            >
-              <Star className="w-4 h-4 mr-2" />
-              Exclusive
-            </Button>
-            <Button 
-              variant={selectedFilter === "percent" ? "default" : "outline"} 
-              className={selectedFilter === "percent" ? "btn-luxury" : "bg-white"}
-              onClick={() => setSelectedFilter("percent")}
-            >
-              <Percent className="w-4 h-4 mr-2" />
-              Discounts
-            </Button>
-            <Button 
-              variant={selectedFilter === "experience" ? "default" : "outline"} 
-              className={selectedFilter === "experience" ? "btn-luxury" : "bg-white"}
-              onClick={() => setSelectedFilter("experience")}
-            >
-              <Star className="w-4 h-4 mr-2" />
-              Experiences
-            </Button>
-          </div>
         </div>
-      </section>
 
-      {/* Offers Grid */}
-      <section className="pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {sortedOffers.map((offer) => (
-              <Card 
-                key={offer.id} 
-                className={`card-luxury group cursor-pointer h-full transition-all duration-300 hover:scale-105 ${
-                  offer.isExclusive ? 'ring-2 ring-gold/30' : ''
-                } ${
-                  offer.isFlash ? 'ring-2 ring-red-300 shadow-lg shadow-red-100' : ''
-                }`}
-              >
-                <CardHeader className="pb-4">
-                  {/* Header Row */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className={`p-3 rounded-full ${getOfferColor(offer.type, offer.isFlash)}`}>
-                      {getOfferIcon(offer.type, offer.isFlash)}
-                    </div>
-                    <div className="flex flex-col gap-2 items-end">
-                      {offer.isFlash && (
-                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium animate-pulse">
-                          FLASH DEAL
-                        </span>
-                      )}
-                      {offer.isExclusive && (
-                        <span className="bg-gold text-navy text-xs px-2 py-1 rounded-full font-medium">
-                          Exclusive
-                        </span>
-                      )}
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <TrendingUp className="w-3 h-3" />
-                        {offer.popularityScore}% popular
-                      </div>
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {[
+            { id: "all", label: "All Offers", icon: <Star className="w-4 h-4" /> },
+            { id: "flash", label: "Flash Deals", icon: <Zap className="w-4 h-4" /> },
+            { id: "featured", label: "Featured", icon: <Flame className="w-4 h-4" /> },
+            { id: "percent", label: "Discounts", icon: <Percent className="w-4 h-4" /> },
+            { id: "experience", label: "Experiences", icon: <Star className="w-4 h-4" /> },
+            { id: "gift", label: "Free Gifts", icon: <Gift className="w-4 h-4" /> }
+          ].map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setSelectedFilter(filter.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                selectedFilter === filter.id
+                  ? "bg-navy-600 text-white shadow-lg scale-105"
+                  : "bg-white/70 text-navy-600 hover:bg-white hover:shadow-md"
+              }`}
+            >
+              {filter.icon}
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Offers Grid */}
+        {filteredOffers.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-6">🎁</div>
+            <h3 className="text-2xl font-bold text-navy-800 mb-4">No offers found</h3>
+            <p className="text-navy-600 mb-8 max-w-md mx-auto">
+              Try selecting a different filter to find more offers.
+            </p>
+            <Button 
+              onClick={() => setSelectedFilter("all")}
+              className="btn-luxury"
+            >
+              View All Offers
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredOffers.map((offer) => (
+              <Card key={offer.id} className="card-luxury group relative overflow-hidden">
+                {/* Flash/Featured Badge */}
+                {(offer.isFlash || offer.featured) && (
+                  <div className="absolute top-4 left-4 z-10">
+                    <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold text-white ${
+                      offer.isFlash ? "bg-coral-500" : "bg-gold-500"
+                    }`}>
+                      {offer.isFlash ? <Zap className="w-3 h-3" /> : <Star className="w-3 h-3" />}
+                      {offer.isFlash ? "FLASH" : "FEATURED"}
                     </div>
                   </div>
+                )}
 
-                  {/* Countdown Timer */}
-                  <div className="mb-4">
-                    <CountdownTimer endTime={offer.validUntil} />
+                {/* Expiring Soon Badge */}
+                {isExpiringSoon(offer.validUntil) && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <div className="flex items-center gap-1 px-3 py-1 bg-red-500 rounded-full text-xs font-bold text-white">
+                      <Clock className="w-3 h-3" />
+                      EXPIRING SOON
+                    </div>
                   </div>
+                )}
 
-                  {/* Title and Store */}
-                  <CardTitle className="text-luxury text-xl mb-2">
+                <div className="relative">
+                  <img
+                    src={offer.image || '/api/placeholder/400/200'}
+                    alt={offer.title}
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  
+                  {/* Offer Value Badge */}
+                  <div className="absolute bottom-4 left-4">
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-bold ${getOfferTypeColor(offer.type)}`}>
+                      {getOfferIcon(offer.type)}
+                      <span className="text-lg">{offer.value}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-xl font-bold text-navy-800 group-hover:text-gold-600 transition-colors line-clamp-2">
                     {offer.title}
                   </CardTitle>
-                  <CardDescription className="text-sm text-gray-500 mb-4">
-                    <Link 
-                      href={`/stores/${offer.store.slug}`}
-                      className="hover:text-navy transition-colors font-medium"
-                    >
-                      {offer.store.name}
-                    </Link>
-                    {" • "}
-                    <Link 
-                      href={`/areas/${offer.store.area.toLowerCase().replace(' ', '-')}`}
-                      className="hover:text-navy transition-colors"
-                    >
-                      {offer.store.area}
-                    </Link>
-                  </CardDescription>
-
-                  {/* Value Display */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className={`inline-block px-3 py-2 rounded-full text-lg font-bold ${getOfferColor(offer.type, offer.isFlash)}`}>
-                      {offer.value}
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-navy-600">
+                      <span className="font-medium">{offer.store}</span>
+                      <span className="text-navy-300">•</span>
+                      <span>{offer.area}</span>
                     </div>
-                    {offer.originalValue && (
-                      <div className="text-sm text-gray-500 line-through">
-                        was {offer.originalValue}
-                      </div>
-                    )}
                   </div>
                 </CardHeader>
 
-                <CardContent>
-                  {/* Description */}
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                <CardContent className="pt-0">
+                  <CardDescription className="text-navy-600 mb-4 line-clamp-3">
                     {offer.description}
-                  </p>
+                  </CardDescription>
 
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <ProgressBar current={offer.currentClaims} max={offer.maxClaims} />
-                  </div>
-
-                  {/* Recent Activity */}
-                  <div className="mb-4">
-                    <h4 className="text-xs font-medium text-gray-700 mb-2">Recent Activity</h4>
-                    <ActivityFeed activities={offer.recentActivity} />
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex justify-between items-center mb-4 p-2 bg-gray-50 rounded-lg">
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-navy">{offer.avgSavings}</div>
-                      <div className="text-xs text-gray-600">Avg. Savings</div>
+                  {/* Highlights */}
+                  {offer.highlights && offer.highlights.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-1">
+                        {offer.highlights.slice(0, 2).map((highlight, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-sage-100 text-sage-700 text-xs rounded-md font-medium"
+                          >
+                            {highlight}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-navy">{offer.maxClaims - offer.currentClaims}</div>
-                      <div className="text-xs text-gray-600">Left</div>
-                    </div>
-                  </div>
+                  )}
 
-                  {/* Terms */}
-                  <div className="text-xs text-gray-500 mb-4">
-                    <strong>Terms:</strong> {offer.terms}
+                  {/* Expiry Info */}
+                  <div className="flex items-center justify-between mb-6 text-sm">
+                    <div className="flex items-center gap-1 text-navy-500">
+                      <Clock className="w-4 h-4" />
+                      <span>Valid until {formatDate(offer.validUntil)}</span>
+                    </div>
                   </div>
 
                   {/* Action Button */}
-                  <div className="space-y-2">
-                    {isOfferClaimed(offer.id) ? (
+                  <div className="space-y-3">
+                    {isAuthenticated ? (
+                      <>
+                        {isOfferClaimed(offer.id) ? (
+                          <Button disabled className="w-full">
+                            Already Claimed
+                          </Button>
+                        ) : (
+                          <Button 
+                            onClick={() => handleClaimOffer(offer)}
+                            className="w-full btn-luxury"
+                          >
+                            Claim Offer
+                          </Button>
+                        )}
+                      </>
+                    ) : (
                       <div className="space-y-2">
                         <Button 
-                          className="w-full bg-green-600 hover:bg-green-700 text-white"
-                          size="sm"
-                          disabled
+                          onClick={() => handleClaimOffer(offer)}
+                          className="w-full btn-luxury"
                         >
-                          ✅ Claimed - In Your Wallet
+                          Sign In to Claim
                         </Button>
-                        <Link href="/dashboard/offers">
-                          <Button 
-                            variant="outline"
-                            className="w-full text-xs"
-                            size="sm"
-                          >
-                            View in Digital Wallet
-                          </Button>
-                        </Link>
+                        <p className="text-xs text-navy-500 text-center">
+                          Free account required to claim offers
+                        </p>
                       </div>
-                    ) : (
-                      <Button 
-                        onClick={() => {
-                          setSelectedOffer(offer);
-                          setShowClaimModal(true);
-                        }}
-                        className={`w-full transition-all ${
-                          offer.isFlash 
-                            ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg' 
-                            : 'btn-luxury'
-                        } group-hover:scale-105`}
-                        size="sm"
-                      >
-                        {offer.isFlash ? '🔥 Claim Flash Deal' : '✨ Claim Offer'}
-                      </Button>
                     )}
                     
-                    <Link href={`/stores/${offer.store.slug}`}>
-                      <Button 
-                        variant="outline"
-                        className="w-full text-xs"
-                        size="sm"
-                      >
-                        Store Details
+                    <Link href={`/stores/${offer.storeSlug}`}>
+                      <Button variant="outline" className="w-full text-navy-600 border-navy-300 hover:bg-navy-50">
+                        View Store Details
                       </Button>
                     </Link>
-                    
-                    {!isAuthenticated && (
-                      <div className="text-xs text-gray-500 text-center">
-                        Sign in to claim offers and get QR codes
-                      </div>
-                    )}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* Social Proof Section */}
-      <section className="py-16 px-4 bg-sand/10">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-display font-bold text-navy text-center mb-12">
-            Join Thousands of Smart Shoppers
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-8 h-8 text-gold" />
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  2,847 Members
-                </h3>
-                <p className="text-gray-600">
-                  Exclusive community of luxury shoppers saving money every day
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-coral/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <TrendingUp className="w-8 h-8 text-coral" />
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  $1.2M Saved
-                </h3>
-                <p className="text-gray-600">
-                  Total savings by our members in the last 12 months
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Star className="w-8 h-8 text-sage" />
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  4.9/5 Rating
-                </h3>
-                <p className="text-gray-600">
-                  Average satisfaction score from our luxury shopping experiences
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* How It Works */}
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-gold">1</span>
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  Discover Offers
-                </h3>
-                <p className="text-gray-600">
-                  Browse time-sensitive deals from Palm Beach&apos;s finest retailers
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-coral/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-coral">2</span>
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  Claim & Visit
-                </h3>
-                <p className="text-gray-600">
-                  Reserve your offer and visit the store with your digital pass
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="card-luxury text-center">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-sage">3</span>
-                </div>
-                <h3 className="text-xl font-display font-semibold text-navy mb-4">
-                  Save & Enjoy
-                </h3>
-                <p className="text-gray-600">
-                  Get your discount, gift, or premium service and share the love
-                </p>
-              </CardContent>
-            </Card>
+        {/* Call to Action */}
+        <div className="mt-20 text-center">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-12 border border-white/40">
+            <h3 className="text-3xl font-bold text-navy-800 mb-4">
+              Don't Miss Out on These Exclusive Deals
+            </h3>
+            <p className="text-xl text-navy-600 mb-8 max-w-2xl mx-auto">
+              Join our community today and get instant access to member-only offers from Palm Beach's finest retailers.
+            </p>
+            {!isAuthenticated && (
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button className="btn-gold min-w-48">
+                  Create Free Account
+                </Button>
+                <Link href="/stores">
+                  <Button variant="outline" className="min-w-48 border-navy-300 text-navy-800 hover:bg-navy-50">
+                    Browse All Stores
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-      </section>
-
-      {/* Final Call to Action */}
-      <section className="py-16 px-4 bg-navy text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-display font-bold mb-4">
-            Don&apos;t Miss Out on These Amazing Deals
-          </h2>
-          <p className="text-xl mb-8 text-white/90">
-            Join thousands of smart shoppers who are saving money at Palm Beach&apos;s finest stores
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/stores">
-              <Button className="bg-gold hover:bg-gold/90 text-navy text-lg px-8 py-4">
-                Start Shopping Now
-              </Button>
-            </Link>
-            <Link href="/events">
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-navy text-lg px-8 py-4">
-                Explore VIP Events
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* Claim Modal */}
       {selectedOffer && (
@@ -641,7 +309,15 @@ export default function OffersClient() {
             setShowClaimModal(false);
             setSelectedOffer(null);
           }}
-          offer={selectedOffer}
+          offer={{
+            id: selectedOffer.id,
+            title: selectedOffer.title,
+            store: selectedOffer.store,
+            storeSlug: selectedOffer.storeSlug,
+            value: selectedOffer.value,
+            validUntil: selectedOffer.validUntil,
+            terms: selectedOffer.terms
+          }}
         />
       )}
     </div>
