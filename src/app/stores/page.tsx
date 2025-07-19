@@ -194,16 +194,25 @@ export default function StoresPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sand/10 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-sand/10 via-white/50 to-white">
       {/* Header */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-display font-bold text-navy mb-6">
-            Store Directory
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Discover Palm Beach&apos;s finest boutiques, from Worth Avenue&apos;s luxury retailers to hidden gems throughout the area
-          </p>
+      <section className="py-20 px-4 relative overflow-hidden">
+        {/* Floating background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/6 w-48 h-48 bg-gold/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute top-1/3 right-1/6 w-40 h-40 bg-coral/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="backdrop-blur-sm bg-white/30 rounded-3xl p-12 shadow-glass border border-white/20 mb-8">
+            <h1 className="text-5xl md:text-6xl font-display font-bold text-luxury mb-6">
+              Store Directory
+            </h1>
+            <p className="text-xl text-gray-700 mb-4 max-w-2xl mx-auto leading-relaxed">
+              Discover Palm Beach&apos;s finest boutiques, from Worth Avenue&apos;s luxury retailers to hidden gems throughout the area
+            </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-gold to-coral mx-auto rounded-full"></div>
+          </div>
         </div>
       </section>
 
@@ -272,55 +281,61 @@ export default function StoresPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredStores.map((store) => (
                 <Link key={store.id} href={`/stores/${store.slug}`}>
-                  <Card className={`card-luxury group cursor-pointer h-full ${store.isPremium ? 'ring-2 ring-gold/20' : ''}`}>
+                  <Card className={`card-premium group cursor-pointer h-full transition-all duration-500 hover-lift ${store.isPremium ? 'ring-2 ring-gold/30 shadow-luxury-glow' : ''}`}>
                     <CardHeader className="pb-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <CardTitle className="text-luxury text-xl">{store.name}</CardTitle>
-                        <div className="flex gap-2">
+                      <div className="flex justify-between items-start mb-3">
+                        <CardTitle className="text-luxury text-xl leading-tight">{store.name}</CardTitle>
+                        <div className="flex flex-col gap-2">
                           {store.isPremium && (
-                            <span className="bg-gold/10 text-gold text-xs px-2 py-1 rounded-full font-medium">
-                              Premium
+                            <span className="bg-gradient-to-r from-gold to-gold/80 text-white text-xs px-3 py-1 rounded-full font-medium shadow-gold">
+                              ⭐ Premium
                             </span>
                           )}
                           {store.hasOffer && (
-                            <span className="bg-coral/10 text-coral text-xs px-2 py-1 rounded-full font-medium">
-                              Welcome Offer
+                            <span className="bg-gradient-to-r from-coral to-coral/80 text-white text-xs px-3 py-1 rounded-full font-medium shadow-luxury">
+                              🎁 Offer
                             </span>
                           )}
                         </div>
                       </div>
-                      <CardDescription className="text-sm text-gray-500">
-                        {store.area} • {store.category}
+                      <CardDescription className="text-base text-gray-600 font-medium">
+                        📍 {store.area} • {store.category}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="h-48 bg-gradient-to-br from-sand/30 to-sage/20 rounded-lg mb-4 flex items-center justify-center">
-                        <span className="text-navy/60 text-lg font-display">{store.name}</span>
+                      <div className="h-52 bg-gradient-to-br from-sand/40 via-white/50 to-sage/30 rounded-xl mb-6 flex flex-col items-center justify-center shadow-luxury-card relative overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-gold/5"></div>
+                        <span className="text-navy font-display text-2xl font-semibold relative z-10 text-center px-4">{store.name}</span>
+                        <div className="absolute bottom-3 right-3 text-navy/40 text-sm font-medium">{store.priceRange}</div>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      
+                      <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
                         {store.description}
                       </p>
                       
-                      {/* Amenities Preview */}
+                      {/* Enhanced Amenities Preview */}
                       {store.amenities && store.amenities.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
+                        <div className="flex flex-wrap gap-2 mb-4">
                           {store.amenities.slice(0, 2).map((amenity) => (
-                            <span key={amenity} className="text-xs bg-sage/10 text-sage px-2 py-1 rounded-full">
+                            <span key={amenity} className="text-xs bg-gradient-to-r from-sage/20 to-sage/10 text-sage border border-sage/20 px-3 py-1 rounded-full font-medium">
                               {amenity}
                             </span>
                           ))}
                           {store.amenities.length > 2 && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                               +{store.amenities.length - 2} more
                             </span>
                           )}
                         </div>
                       )}
                       
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-500">{store.priceRange}</span>
-                        <span className="text-sm text-navy font-medium group-hover:text-gold transition-colors">
-                          View Details →
+                      <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-500">Price Range:</span>
+                          <span className="text-sm font-semibold text-navy">{store.priceRange}</span>
+                        </div>
+                        <span className="text-sm text-gold font-semibold group-hover:text-coral transition-colors flex items-center">
+                          Explore <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
                         </span>
                       </div>
                     </CardContent>
@@ -333,17 +348,40 @@ export default function StoresPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 px-4 bg-sand/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-display font-bold text-navy mb-4">
-            Own a Store in Palm Beach?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join our exclusive directory and connect with discerning shoppers
-          </p>
-          <Button className="btn-luxury text-lg px-8 py-4">
-            List Your Store
-          </Button>
+      <section className="py-20 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-white/10 to-coral/5"></div>
+        <div className="absolute inset-0 backdrop-blur-3xl bg-white/40"></div>
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="card-glass p-12">
+            <div className="w-20 h-20 bg-gradient-to-br from-gold to-coral rounded-full flex items-center justify-center mx-auto mb-8 shadow-gold-glow">
+              <span className="text-white text-2xl">🏪</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-luxury mb-6">
+              Own a Store in Palm Beach?
+            </h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Join our exclusive directory and connect with discerning shoppers seeking luxury experiences
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button className="btn-luxury text-lg px-10 py-4 hover-lift">
+                🚀 List Your Store
+              </Button>
+              <Button className="btn-glass text-lg px-10 py-4 hover-lift">
+                📞 Contact Us
+              </Button>
+            </div>
+            
+            <div className="mt-8 flex items-center justify-center space-x-6 text-sm text-gray-600">
+              <span>✨ Premium Placement</span>
+              <span>•</span>
+              <span>📈 Targeted Marketing</span>
+              <span>•</span>
+              <span>🎯 Quality Leads</span>
+            </div>
+          </div>
         </div>
       </section>
     </div>

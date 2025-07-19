@@ -11,14 +11,14 @@ export default function Header() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sand/20 shadow-sm">
+    <header className="sticky top-0 z-50 header-glass shadow-glass border-b border-glass">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <h1 className="text-2xl font-display font-bold text-navy">
+          <Link href="/" className="flex items-center hover-lift">
+            <h1 className="text-2xl font-display font-bold text-luxury">
               Palm Beach
-              <span className="text-gold"> Luxe</span>
+              <span className="text-gold-glow"> Luxe</span>
             </h1>
           </Link>
 
@@ -31,37 +31,37 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/stores"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               Stores
             </Link>
             <Link
               href="/areas"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               Areas
             </Link>
             <Link
               href="/offers"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               Offers
             </Link>
             <Link
               href="/events"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               Events
             </Link>
             <Link
               href="/concierge"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               Concierge
             </Link>
             <Link
               href="/about"
-              className="text-gray-700 hover:text-navy transition-colors font-medium"
+              className="text-gray-700 hover:text-gold transition-all duration-300 font-medium hover:scale-105"
             >
               About
             </Link>
