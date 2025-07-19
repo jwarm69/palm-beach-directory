@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/SearchBar";
+import UserMenu from "@/components/auth/UserMenu";
+import AuthModal from "@/components/auth/AuthModal";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sand/20 shadow-sm">
@@ -63,9 +65,7 @@ export default function Header() {
             >
               About
             </Link>
-            <Button className="btn-gold">
-              List Your Store
-            </Button>
+            <UserMenu onAuthClick={() => setShowAuthModal(true)} />
           </div>
 
           {/* Mobile Menu Button */}
@@ -143,13 +143,18 @@ export default function Header() {
               >
                 About
               </Link>
-              <Button className="btn-gold w-full">
-                List Your Store
-              </Button>
+              <div className="pt-4 border-t border-sand/20">
+                <UserMenu onAuthClick={() => setShowAuthModal(true)} />
+              </div>
             </div>
           </div>
         )}
       </nav>
+      
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+      />
     </header>
   );
 }

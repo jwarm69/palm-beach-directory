@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import { OrganizationSchema } from "@/components/StructuredData";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "Palm Beach Luxury Guide - Discover Worth Avenue's Finest",
@@ -75,16 +76,18 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="antialiased">
-        <OrganizationSchema
-          name="Palm Beach Luxury Guide"
-          description="Your definitive guide to Palm Beach's premier shopping destinations"
-          url="https://palm-beach-directory.vercel.app"
-          logo="https://palm-beach-directory.vercel.app/logo.png"
-        />
-        <Header />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <AuthProvider>
+          <OrganizationSchema
+            name="Palm Beach Luxury Guide"
+            description="Your definitive guide to Palm Beach's premier shopping destinations"
+            url="https://palm-beach-directory.vercel.app"
+            logo="https://palm-beach-directory.vercel.app/logo.png"
+          />
+          <Header />
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
