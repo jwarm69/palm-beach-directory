@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Gift, Percent, Star, Clock, TrendingUp, Users, Zap, Flame } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOfferRedemption } from "@/contexts/OfferRedemptionContext";
+import OfferClaimModal from "@/components/offers/OfferClaimModal";
 
 // Enhanced offers with urgency and tracking
 const offers = [
@@ -236,7 +238,10 @@ function ActivityFeed({ activities }: { activities: string[] }) {
 
 export default function OffersClient() {
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedOffer, setSelectedOffer] = useState<typeof offers[0] | null>(null);
+  const [showClaimModal, setShowClaimModal] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { isOfferClaimed } = useOfferRedemption();
 
   const filteredOffers = offers.filter(offer => {
     if (selectedFilter === "all") return true;
@@ -447,8 +452,31 @@ export default function OffersClient() {
 
                   {/* Action Button */}
                   <div className="space-y-2">
-                    <Link href={`/stores/${offer.store.slug}`}>
+                    {isOfferClaimed(offer.id) ? (
+                      <div className="space-y-2">
+                        <Button 
+                          className="w-full bg-green-600 hover:bg-green-700 text-white"
+                          size="sm"
+                          disabled
+                        >
+                          ✅ Claimed - In Your Wallet
+                        </Button>
+                        <Link href="/dashboard/offers">
+                          <Button 
+                            variant="outline"
+                            className="w-full text-xs"
+                            size="sm"
+                          >
+                            View in Digital Wallet
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
                       <Button 
+                        onClick={() => {
+                          setSelectedOffer(offer);
+                          setShowClaimModal(true);
+                        }}
                         className={`w-full transition-all ${
                           offer.isFlash 
                             ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg' 
@@ -458,11 +486,21 @@ export default function OffersClient() {
                       >
                         {offer.isFlash ? '🔥 Claim Flash Deal' : '✨ Claim Offer'}
                       </Button>
+                    )}
+                    
+                    <Link href={`/stores/${offer.store.slug}`}>
+                      <Button 
+                        variant="outline"
+                        className="w-full text-xs"
+                        size="sm"
+                      >
+                        Store Details
+                      </Button>
                     </Link>
                     
                     {!isAuthenticated && (
                       <div className="text-xs text-gray-500 text-center">
-                        Sign in to save offers and get notifications
+                        Sign in to claim offers and get QR codes
                       </div>
                     )}
                   </div>
@@ -594,6 +632,18 @@ export default function OffersClient() {
           </div>
         </div>
       </section>
+
+      {/* Claim Modal */}
+      {selectedOffer && (
+        <OfferClaimModal
+          isOpen={showClaimModal}
+          onClose={() => {
+            setShowClaimModal(false);
+            setSelectedOffer(null);
+          }}
+          offer={selectedOffer}
+        />
+      )}
     </div>
   );
 }
