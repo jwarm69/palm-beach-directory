@@ -27,12 +27,12 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link href="/stores">
-              <Button className="btn-luxury text-lg px-10 py-6 hover-lift">
+              <Button className="btn-luxury group text-lg px-10 py-6 hover-lift">
                 ✨ Explore Stores
               </Button>
             </Link>
             <Link href="/offers">
-              <Button className="btn-gold text-lg px-10 py-6 hover-lift">
+              <Button className="btn-gold group text-lg px-10 py-6 hover-lift">
                 🎁 View Offers
               </Button>
             </Link>
@@ -68,7 +68,7 @@ export default function Home() {
                     <div className="absolute bottom-4 right-4 text-white/80 text-sm">Est. 1918</div>
                   </div>
                   <p className="text-gray-600 leading-relaxed">
-                    Explore high-end fashion, jewelry, and art galleries in America's most prestigious shopping destination
+                    Explore high-end fashion, jewelry, and art galleries in America&apos;s most prestigious shopping destination
                   </p>
                 </CardContent>
               </Card>
@@ -174,7 +174,7 @@ export default function Home() {
           
           <div className="mt-12">
             <Link href="/offers">
-              <Button className="btn-glass text-lg px-10 py-4 hover-lift">
+              <Button className="btn-glass group text-lg px-10 py-4 hover-lift">
                 View All Exclusive Offers →
               </Button>
             </Link>
@@ -183,7 +183,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-gradient-to-t from-sand/20 to-white border-t border-glass">
+      <footer className="py-12 px-4 bg-gradient-to-t from-sand/20 to-white border-t border-white/20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="backdrop-blur-sm bg-white/50 rounded-2xl p-8 shadow-glass border border-white/20">
             <p className="text-gray-700 text-lg leading-relaxed">

@@ -240,7 +240,7 @@ export default function StoresPage() {
                 hasOffers: false,
                 isPremium: false,
               })} 
-              className="btn-gold">
+              className="btn-gold group">
                 Clear All Filters
               </Button>
             )}
@@ -273,7 +273,7 @@ export default function StoresPage() {
                 hasOffers: false,
                 isPremium: false,
               })} 
-              className="btn-luxury">
+              className="btn-luxury group">
                 View All Stores
               </Button>
             </div>
@@ -366,10 +366,10 @@ export default function StoresPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button className="btn-luxury text-lg px-10 py-4 hover-lift">
+              <Button className="btn-luxury group text-lg px-10 py-4 hover-lift">
                 🚀 List Your Store
               </Button>
-              <Button className="btn-glass text-lg px-10 py-4 hover-lift">
+              <Button className="btn-glass group text-lg px-10 py-4 hover-lift">
                 📞 Contact Us
               </Button>
             </div>

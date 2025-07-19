@@ -89,7 +89,7 @@
 @layer components {
   /* Enhanced Button Components */
   .btn-luxury {
-    @apply relative bg-navy text-white px-8 py-4 rounded-xl hover:bg-navy/90 transition-all duration-500 shadow-luxury-deep font-medium overflow-hidden group;
+    @apply relative bg-navy text-white px-8 py-4 rounded-xl hover:bg-navy/90 transition-all duration-500 shadow-luxury-deep font-medium overflow-hidden;
   }
   
   .btn-luxury::before {
@@ -102,7 +102,7 @@
   }
   
   .btn-gold {
-    @apply relative bg-gradient-to-br from-gold via-gold to-gold/80 text-navy px-8 py-4 rounded-xl hover:from-gold/90 hover:via-gold hover:to-gold transition-all duration-500 shadow-gold-deep font-medium overflow-hidden group;
+    @apply relative bg-gradient-to-br from-gold via-gold to-gold/80 text-navy px-8 py-4 rounded-xl hover:from-gold/90 hover:via-gold hover:to-gold transition-all duration-500 shadow-gold-deep font-medium overflow-hidden;
   }
   
   .btn-gold::before {
@@ -115,7 +115,7 @@
   }
   
   .btn-glass {
-    @apply relative backdrop-blur-xl bg-glass border border-glass-border text-navy px-8 py-4 rounded-xl hover:bg-white/30 transition-all duration-500 shadow-glass font-medium;
+    @apply relative backdrop-blur-xl bg-glass border border-white/20 text-navy px-8 py-4 rounded-xl hover:bg-white/30 transition-all duration-500 shadow-glass font-medium;
   }
   
   .btn-glass:hover {
@@ -124,7 +124,7 @@
   
   /* Enhanced Card Components */
   .card-luxury {
-    @apply relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-luxury-card border border-white/20 overflow-hidden hover:shadow-luxury-hover transition-all duration-500 group;
+    @apply relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-luxury-card border border-white/20 overflow-hidden hover:shadow-luxury-hover transition-all duration-500;
     background-image: var(--paper-texture);
   }
   
@@ -138,11 +138,11 @@
   }
   
   .card-glass {
-    @apply relative backdrop-blur-xl bg-glass border border-glass-border rounded-2xl shadow-glass overflow-hidden hover:shadow-glass-glow transition-all duration-500;
+    @apply relative backdrop-blur-xl bg-glass border border-white/20 rounded-2xl shadow-glass overflow-hidden hover:shadow-glass-glow transition-all duration-500;
   }
   
   .card-premium {
-    @apply relative bg-gradient-to-br from-white via-white to-sand/30 rounded-2xl shadow-premium border border-gold/20 overflow-hidden hover:shadow-premium-glow transition-all duration-500 group;
+    @apply relative bg-gradient-to-br from-white via-white to-sand/30 rounded-2xl shadow-premium border border-gold/20 overflow-hidden hover:shadow-premium-glow transition-all duration-500;
   }
   
   .card-premium::before {
